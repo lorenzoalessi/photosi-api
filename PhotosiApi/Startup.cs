@@ -1,4 +1,7 @@
-﻿using PhotosiApi.Settings;
+﻿using PhotosiApi.HttpClients.User;
+using PhotosiApi.Security;
+using PhotosiApi.Service.User;
+using PhotosiApi.Settings;
 
 namespace PhotosiApi;
 
@@ -17,6 +20,7 @@ public class Startup
 
         var appSettings = _builder.Configuration.GetSection("Settings").Get<AppSettings>();
         ConfigureSettings(appSettings);
+        ConfigureHttp(appSettings);
         
         _builder.Services.AddAutoMapper(typeof(Startup));
         ConfigureMyServices(_builder.Services);
@@ -37,7 +41,15 @@ public class Startup
     private void ConfigureMyServices(IServiceCollection services)
     {
         // Aggiunge i propri servizi al container di dependency injection.
-        _ = services
+        _ = services.AddScoped<IUserService, UserService>()
             ;
+
+        // Singleton
+        _ = services.AddSingleton<IUserLoginHandler, UserLoginHandler>();
+    }
+    
+    private void ConfigureHttp(AppSettings appSettings)
+    {
+        _builder.Services.AddHttpClient<IUserHttpClient, UserHttpClient>();
     }
 }
