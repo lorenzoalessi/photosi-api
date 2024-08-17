@@ -22,8 +22,7 @@ public class UserController : ControllerBase
     {
         try
         {
-            var newUser = await _userService.RegisterAsync(userRequest);
-            return Ok($"Utente creato con successo! ID: {newUser.Id}");
+            return Ok(await _userService.RegisterAsync(userRequest));
         }
         catch (Exception e) when (e is UserException or BaseHttpClientException)
         {
