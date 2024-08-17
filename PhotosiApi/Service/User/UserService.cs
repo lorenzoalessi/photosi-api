@@ -47,4 +47,28 @@ public class UserService : IUserService
 
         return token;
     }
+
+    public async Task<List<UserDto>> GetAsync()
+    {
+        var users = await _userHttpClient.Get<List<UserDto>>(_photosiUsersUrl);
+        if (users == null || users.Count == 0)
+            throw new UserException("Utenti non trovati");
+
+        return users;
+    }
+
+    public async Task<UserDto> GetByIdAsync(int id)
+    {
+        var user = await _userHttpClient.Get<UserDto>($"{_photosiUsersUrl}/{id}");
+        if (user == null)
+            throw new UserException("Utente non trovato");
+
+        return user;
+    }
+
+    public async Task<bool> UpdateAsync(int id, UserDto userRequest) => 
+        await _userHttpClient.Put($"{_photosiUsersUrl}/{id}", userRequest);
+
+    public async Task<bool> DeleteAsync(int id) => 
+        await _userHttpClient.Delete($"{_photosiUsersUrl}/{id}");
 }
