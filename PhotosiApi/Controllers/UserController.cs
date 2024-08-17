@@ -76,7 +76,7 @@ public class UserController : ControllerBase
         }
         catch (UserException e)
         {
-            return StatusCode(500, $"Errore nel recupero degli utenti: {e.Message}");
+            return StatusCode(500, $"Errore nel recupero dell'utente: {e.Message}");
         }
     }
 
@@ -109,7 +109,6 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("ping")]
-    [ValidToken]
     public IActionResult Ping()
     {
         return Ok();

@@ -51,7 +51,7 @@ public class UserService : IUserService
     public async Task<List<UserDto>> GetAsync()
     {
         var users = await _userHttpClient.Get<List<UserDto>>(_photosiUsersUrl);
-        if (users == null || users.Count == 0)
+        if (users == null)
             throw new UserException("Utenti non trovati");
 
         return users;
