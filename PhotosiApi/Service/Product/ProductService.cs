@@ -39,9 +39,9 @@ public class ProductService : IProductService
     public async Task<bool> UpdateAsync(int id, ProductDto productRequest) =>
         await _productHttpClient.Put($"{_photosiProducstUrl}/{id}", productRequest);
 
-    public async Task<ProductDto> AddAsync(int id, ProductDto productRequest)
+    public async Task<ProductDto> AddAsync(ProductDto productRequest)
     {
-        var newProduct = await _productHttpClient.Post<ProductDto>($"{_photosiProducstUrl}", productRequest);
+        var newProduct = await _productHttpClient.Post<ProductDto>(_photosiProducstUrl, productRequest);
         if (newProduct == null)
             throw new ProductException("Prodotto nullo nella risposta");
 

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PhotosiApi.Dto;
 using PhotosiApi.Dto.Product;
 using PhotosiApi.Exceptions;
 using PhotosiApi.Security;
@@ -7,7 +6,7 @@ using PhotosiApi.Service.Product;
 
 namespace PhotosiApi.Controllers;
 
-[Route("api/v1/users")]
+[Route("api/v1/products")]
 [ApiController]
 public class ProductController : ControllerBase
 {
@@ -26,7 +25,7 @@ public class ProductController : ControllerBase
         {
             return Ok(await _productService.GetAsync());
         }
-        catch (UserException e)
+        catch (ProductException e)
         {
             return StatusCode(500, $"Errore nel recupero dei prodotti: {e.Message}");
         }
@@ -43,7 +42,7 @@ public class ProductController : ControllerBase
         {
             return Ok(await _productService.GetByIdAsync(id));
         }
-        catch (UserException e)
+        catch (ProductException e)
         {
             return StatusCode(500, $"Errore nel recupero del prodotto: {e.Message}");
         }
@@ -61,6 +60,20 @@ public class ProductController : ControllerBase
             return StatusCode(500, "Qualcosa è andato storto, prodotto non modificato");
             
         return Ok("Prodotto aggiornato con successo");
+    }
+
+    [HttpPost]
+    [ValidToken]
+    public async Task<IActionResult> Add([FromBody] ProductDto productRequest)
+    {
+        try
+        {
+            return Ok(await _productService.AddAsync(productRequest));
+        }
+        catch (ProductException e)
+        {
+            return StatusCode(500, $"Errore nell'inserimento del prodotto: {e.Message}");
+        }
     }
 
     [HttpDelete("{id}")]
