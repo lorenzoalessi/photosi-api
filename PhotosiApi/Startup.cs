@@ -18,17 +18,12 @@ public class Startup
     {
         _ = _builder.Services.AddControllers();
 
-        var appSettings = _builder.Configuration.GetSection("Settings").Get<AppSettings>();
-        ConfigureSettings(appSettings);
-        ConfigureHttp(appSettings);
+        var appSettings = _builder.Configuration.GetSection("Settings");
+        _builder.Services.Configure<AppSettings>(appSettings);
+        ConfigureHttp(appSettings.Get<AppSettings>());
         
         _builder.Services.AddAutoMapper(typeof(Startup));
         ConfigureMyServices(_builder.Services);
-    }
-    
-    private void ConfigureSettings(AppSettings appSettings)
-    {
-        _ = _builder.Services.AddSingleton(appSettings);
     }
     
     public void Configure(IApplicationBuilder app)
