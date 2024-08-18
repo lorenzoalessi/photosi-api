@@ -2,6 +2,7 @@
 using PhotosiApi.Dto;
 using PhotosiApi.Exceptions;
 using PhotosiApi.HttpClients.User;
+using PhotosiApi.Service.User.Login;
 using PhotosiApi.Settings;
 using PhotosiApi.Utility;
 

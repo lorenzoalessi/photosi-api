@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using PhotosiApi.Controllers;
 using PhotosiApi.Service.User;
+using PhotosiApi.Service.User.Login;
 using PhotosiApi.Utility;
 
 namespace PhotosiApi.Security;
@@ -37,17 +39,16 @@ public class ValidTokenAttribute : ActionFilterAttribute
             return;
         }
 
-        loginHandler.CurrentUser = user;
+        if (context.Controller is BaseController controller)
+        {
+            controller.LoggedUser = user;
+        }
+        else
+        {
+            context.Result = new UnauthorizedResult();
+            return;
+        }
         
         base.OnActionExecuting(context);
-    }
-
-    public override void OnResultExecuted(ResultExecutedContext context)
-    {
-        var loginHandler = context.HttpContext.RequestServices.GetService<IUserLoginHandler>() ?? throw new NullReferenceException();
-
-        loginHandler.CurrentUser = null;
-        
-        base.OnResultExecuted(context);
     }
 }

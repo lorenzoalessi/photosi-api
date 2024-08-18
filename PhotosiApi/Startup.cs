@@ -1,6 +1,6 @@
 ﻿using PhotosiApi.HttpClients.User;
-using PhotosiApi.Security;
 using PhotosiApi.Service.User;
+using PhotosiApi.Service.User.Login;
 using PhotosiApi.Settings;
 
 namespace PhotosiApi;
@@ -20,7 +20,8 @@ public class Startup
 
         var appSettings = _builder.Configuration.GetSection("Settings");
         _builder.Services.Configure<AppSettings>(appSettings);
-        ConfigureHttp(appSettings.Get<AppSettings>());
+        
+        ConfigureHttp();
         
         _builder.Services.AddAutoMapper(typeof(Startup));
         ConfigureMyServices(_builder.Services);
@@ -43,7 +44,7 @@ public class Startup
         _ = services.AddSingleton<IUserLoginHandler, UserLoginHandler>();
     }
     
-    private void ConfigureHttp(AppSettings appSettings)
+    private void ConfigureHttp()
     {
         _builder.Services.AddHttpClient<IUserHttpClient, UserHttpClient>();
     }
