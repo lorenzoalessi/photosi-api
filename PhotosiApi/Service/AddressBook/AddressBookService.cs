@@ -1,26 +1,26 @@
 ﻿using Microsoft.Extensions.Options;
 using PhotosiApi.Dto.AddressBook;
 using PhotosiApi.Exceptions;
-using PhotosiApi.HttpClients.AddressBook;
+using PhotosiApi.HttpClients;
 using PhotosiApi.Settings;
 
 namespace PhotosiApi.Service.AddressBook;
 
 public class AddressBookService : IAddressBookService
 {
-    private readonly IAddressBookHttpClient _addressBookHttpClient;
+    private readonly IBaseHttpClient _baseHttpClient;
 
     private readonly string _photosiAddressBooksUrl;
 
-    public AddressBookService(IOptions<AppSettings> options, IAddressBookHttpClient addressBookHttpClient)
+    public AddressBookService(IOptions<AppSettings> options, IBaseHttpClient baseHttpClient)
     {
         _photosiAddressBooksUrl = options.Value.PhotosiAddressBooksUrl;
-        _addressBookHttpClient = addressBookHttpClient;
+        _baseHttpClient = baseHttpClient;
     }
     
     public async Task<List<AddressBookDto>> GetAsync()
     {
-        var addressBooks = await _addressBookHttpClient.Get<List<AddressBookDto>>(_photosiAddressBooksUrl);
+        var addressBooks = await _baseHttpClient.Get<List<AddressBookDto>>(_photosiAddressBooksUrl);
         if (addressBooks == null)
             throw new AddressBookException("Indirizzi non trovati");
 
@@ -29,7 +29,7 @@ public class AddressBookService : IAddressBookService
 
     public async Task<AddressBookDto> GetByIdAsync(int id)
     {
-        var addressBook = await _addressBookHttpClient.Get<AddressBookDto>($"{_photosiAddressBooksUrl}/{id}");
+        var addressBook = await _baseHttpClient.Get<AddressBookDto>($"{_photosiAddressBooksUrl}/{id}");
         if (addressBook == null)
             throw new AddressBookException("Indirizzo non trovato");
 
@@ -37,12 +37,12 @@ public class AddressBookService : IAddressBookService
     }
 
     public async Task<bool> UpdateAsync(int id, AddressBookDto addressBookRequest) =>
-        await _addressBookHttpClient.Put($"{_photosiAddressBooksUrl}/{id}", addressBookRequest);
+        await _baseHttpClient.Put($"{_photosiAddressBooksUrl}/{id}", addressBookRequest);
 
     public async Task<AddressBookDto> AddAsync(AddressBookDto addressBookRequest)
     {
         var newAddressBook =
-            await _addressBookHttpClient.Post<AddressBookDto>(_photosiAddressBooksUrl, addressBookRequest);
+            await _baseHttpClient.Post<AddressBookDto>(_photosiAddressBooksUrl, addressBookRequest);
         if (newAddressBook == null)
             throw new AddressBookException("Indirizzo nullo nella risposta");
 
@@ -50,5 +50,5 @@ public class AddressBookService : IAddressBookService
     }
 
     public async Task<bool> DeleteAsync(int id) =>
-        await _addressBookHttpClient.Delete($"{_photosiAddressBooksUrl}/{id}");
+        await _baseHttpClient.Delete($"{_photosiAddressBooksUrl}/{id}");
 }

@@ -3,41 +3,32 @@ using PhotosiApi.Dto.AddressBook;
 using PhotosiApi.Dto.Order;
 using PhotosiApi.Dto.Product;
 using PhotosiApi.Exceptions;
-using PhotosiApi.HttpClients.AddressBook;
-using PhotosiApi.HttpClients.Order;
-using PhotosiApi.HttpClients.Product;
+using PhotosiApi.HttpClients;
 using PhotosiApi.Settings;
 
 namespace PhotosiApi.Service.Order;
 
 public class OrderService : IOrderService
 {
-    private readonly IOrderHttpClient _orderHttpClient;
-    private readonly IProductHttpClient _productHttpClient;
-    private readonly IAddressBookHttpClient _addressBookHttpClient;
+    private readonly IBaseHttpClient _baseHttpClient;
 
     private readonly string _photosiOrdersUrl;
     private readonly string _photosiProductsUrl;
     private readonly string _photosiAddressBooksUrl;
     
-    public OrderService(IOptions<AppSettings> options,
-        IOrderHttpClient orderHttpClient, 
-        IProductHttpClient productHttpClient, 
-        IAddressBookHttpClient addressBookHttpClient)
+    public OrderService(IOptions<AppSettings> options, IBaseHttpClient baseHttpClient)
     {
         _photosiOrdersUrl = options.Value.PhotosiOrdersUrl;
         _photosiProductsUrl = options.Value.PhotosiProductsUrl;
         _photosiAddressBooksUrl = options.Value.PhotosiAddressBooksUrl;
-        
-        _orderHttpClient = orderHttpClient;
-        _productHttpClient = productHttpClient;
-        _addressBookHttpClient = addressBookHttpClient;
+
+        _baseHttpClient = baseHttpClient;
     }
 
     public async Task<List<EntireOrderDto>> GetAllForUser(int userId)
     {
         // Recupero gli ordini
-        var orders = await _orderHttpClient.Get<List<OrderDto>>($"{_photosiOrdersUrl}/user/{userId}");
+        var orders = await _baseHttpClient.Get<List<OrderDto>>($"{_photosiOrdersUrl}/user/{userId}");
         if (orders == null)
             throw new OrderException("Ordini non trovati");
 
@@ -49,7 +40,7 @@ public class OrderService : IOrderService
             // Recupero tutti i prodotti (per ogni ordine)
             var productsTask = order.OrderProducts.Select(async product =>
             {
-                var entireProductDto = await _productHttpClient.Get<EntireProductDto>($"{_photosiProductsUrl}/{product.Id}");
+                var entireProductDto = await _baseHttpClient.Get<EntireProductDto>($"{_photosiProductsUrl}/{product.Id}");
                 if (entireProductDto == null)
                     throw new OrderException($"Prodotto con ID {product.Id} non trovato");
 
@@ -78,7 +69,7 @@ public class OrderService : IOrderService
     public async Task<EntireOrderDto> GetByIdAsync(int id)
     {
         // Recupero l'ordine
-        var orderDto = await _orderHttpClient.Get<OrderDto>($"{_photosiOrdersUrl}/{id}");
+        var orderDto = await _baseHttpClient.Get<OrderDto>($"{_photosiOrdersUrl}/{id}");
         if (orderDto == null)
             throw new OrderException("Ordine non trovato");
 
@@ -86,7 +77,7 @@ public class OrderService : IOrderService
         var entireProductDtos = new List<EntireProductDto>();
         var productsTask = orderDto.OrderProducts.Select(async x =>
         {
-            var entireProductDto = await _productHttpClient.Get<EntireProductDto>($"{_photosiProductsUrl}/{x.Id}");
+            var entireProductDto = await _baseHttpClient.Get<EntireProductDto>($"{_photosiProductsUrl}/{x.Id}");
             if (entireProductDto == null)
                 throw new OrderException($"Prodotto con ID {x.Id} non trovato");
 
@@ -112,7 +103,7 @@ public class OrderService : IOrderService
 
     public async Task<bool> UpdateAsync(int id, OrderDto orderRequest)
     {
-        var order = await _orderHttpClient.Get<OrderDto>($"{_photosiOrdersUrl}/{id}");
+        var order = await _baseHttpClient.Get<OrderDto>($"{_photosiOrdersUrl}/{id}");
         if (order == null)
             throw new OrderException("Ordine non trovato");
         
@@ -123,7 +114,7 @@ public class OrderService : IOrderService
         _ = await AddressBookExist(orderRequest.AddressId);
         
         // Modifico l'ordine
-        return await _orderHttpClient.Put($"{_photosiOrdersUrl}/{id}", orderRequest);
+        return await _baseHttpClient.Put($"{_photosiOrdersUrl}/{id}", orderRequest);
     }
 
     public async Task<OrderDto> AddAsync(OrderDto orderRequest)
@@ -135,7 +126,7 @@ public class OrderService : IOrderService
         _ = await AddressBookExist(orderRequest.AddressId);
         
         // Aggiungo l'ordine
-        var newOrder = await _orderHttpClient.Post<OrderDto>(_photosiOrdersUrl, orderRequest);
+        var newOrder = await _baseHttpClient.Post<OrderDto>(_photosiOrdersUrl, orderRequest);
         if (newOrder == null)
             throw new OrderException("Ordine nullo nella risposta");
         
@@ -143,14 +134,14 @@ public class OrderService : IOrderService
     }
 
     public async Task<bool> DeleteAsync(int id) =>
-        await _orderHttpClient.Delete($"{_photosiOrdersUrl}/{id}");
+        await _baseHttpClient.Delete($"{_photosiOrdersUrl}/{id}");
 
     private async Task ProductsExists(List<OrderProductDto> orderProductDtos)
     {
         // Controllo i prodotti
         var productsTask = orderProductDtos.Select(async x =>
         {
-            var productDto = await _productHttpClient.Get<ProductDto>($"{_photosiProductsUrl}/{x.Id}");
+            var productDto = await _baseHttpClient.Get<ProductDto>($"{_photosiProductsUrl}/{x.Id}");
             if (productDto == null)
                 throw new OrderException($"Prodotto con ID {x.Id} non trovato");
         });
@@ -164,7 +155,7 @@ public class OrderService : IOrderService
     private async Task<AddressBookDto> AddressBookExist(int addressBookId)
     {
         var addressBookDto =
-            await _addressBookHttpClient.Get<AddressBookDto>($"{_photosiAddressBooksUrl}/{addressBookId}");
+            await _baseHttpClient.Get<AddressBookDto>($"{_photosiAddressBooksUrl}/{addressBookId}");
         if (addressBookDto == null)
             throw new OrderException($"Indirizzo con ID {addressBookId} non trovato");
 

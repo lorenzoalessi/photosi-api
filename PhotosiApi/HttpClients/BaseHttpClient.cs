@@ -3,7 +3,7 @@ using PhotosiApi.Exceptions;
 
 namespace PhotosiApi.HttpClients;
 
-public abstract class BaseHttpClient : IBaseHttpClient
+public class BaseHttpClient : IBaseHttpClient
 {
     private readonly HttpClient _httpClient;
 

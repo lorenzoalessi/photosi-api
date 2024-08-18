@@ -1,7 +1,4 @@
-﻿using PhotosiApi.HttpClients.AddressBook;
-using PhotosiApi.HttpClients.Order;
-using PhotosiApi.HttpClients.Product;
-using PhotosiApi.HttpClients.User;
+using PhotosiApi.HttpClients;
 using PhotosiApi.Service.AddressBook;
 using PhotosiApi.Service.Order;
 using PhotosiApi.Service.Product;
@@ -54,9 +51,6 @@ public class Startup
     
     private void ConfigureHttp()
     {
-        _builder.Services.AddHttpClient<IUserHttpClient, UserHttpClient>();
-        _builder.Services.AddHttpClient<IProductHttpClient, ProductHttpClient>();
-        _builder.Services.AddHttpClient<IOrderHttpClient, OrderHttpClient>();
-        _builder.Services.AddHttpClient<IAddressBookHttpClient, AddressBookHttpClient>();
+        _builder.Services.AddHttpClient<IBaseHttpClient, BaseHttpClient>();
     }
 }
