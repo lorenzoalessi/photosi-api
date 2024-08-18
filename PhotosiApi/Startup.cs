@@ -1,4 +1,10 @@
-﻿using PhotosiApi.HttpClients.User;
+﻿using PhotosiApi.HttpClients.AddressBook;
+using PhotosiApi.HttpClients.Order;
+using PhotosiApi.HttpClients.Product;
+using PhotosiApi.HttpClients.User;
+using PhotosiApi.Service.AddressBook;
+using PhotosiApi.Service.Order;
+using PhotosiApi.Service.Product;
 using PhotosiApi.Service.User;
 using PhotosiApi.Service.User.Login;
 using PhotosiApi.Settings;
@@ -38,7 +44,9 @@ public class Startup
     {
         // Aggiunge i propri servizi al container di dependency injection.
         _ = services.AddScoped<IUserService, UserService>()
-            ;
+                .AddScoped<IProductService, ProductService>()
+                .AddScoped<IOrderService, OrderService>()
+                .AddScoped<IAddressBookService, AddressBookService>();
 
         // Singleton
         _ = services.AddSingleton<IUserLoginHandler, UserLoginHandler>();
@@ -47,5 +55,8 @@ public class Startup
     private void ConfigureHttp()
     {
         _builder.Services.AddHttpClient<IUserHttpClient, UserHttpClient>();
+        _builder.Services.AddHttpClient<IProductHttpClient, ProductHttpClient>();
+        _builder.Services.AddHttpClient<IOrderHttpClient, OrderHttpClient>();
+        _builder.Services.AddHttpClient<IAddressBookHttpClient, AddressBookHttpClient>();
     }
 }

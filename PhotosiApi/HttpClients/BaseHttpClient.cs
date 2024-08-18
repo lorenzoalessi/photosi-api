@@ -1,4 +1,5 @@
-﻿using PhotosiApi.Exceptions;
+﻿using System.Net;
+using PhotosiApi.Exceptions;
 
 namespace PhotosiApi.HttpClients;
 
@@ -17,6 +18,9 @@ public abstract class BaseHttpClient : IBaseHttpClient
 
         if (!response.IsSuccessStatusCode)
             throw new BaseHttpClientException(await response.Content.ReadAsStringAsync());
+
+        if (response.StatusCode != HttpStatusCode.OK)
+            return default;
 
         return await response.Content.ReadFromJsonAsync<T>();
     }
