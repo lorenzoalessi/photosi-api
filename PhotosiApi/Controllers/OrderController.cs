@@ -34,6 +34,36 @@ public class OrderController : BaseController
         }
     }
 
+    [HttpPut("{id}")]
+    [ValidToken]
+    public async Task<IActionResult> Update(int id, [FromBody] OrderDto orderRequest)
+    {
+        if (orderRequest.OrderProducts.Count == 0)
+            return BadRequest("Nessun prodotto associato all'ordine");
+        
+        if (orderRequest.AddressId < 1)
+            return BadRequest("ID indirizzo fornito non valido");
+
+        var userLoggedId = LoggedUser?.User.Id ?? 0;
+        if (userLoggedId < 1)
+            return BadRequest("Errore nella sessione dell'utente, ritentare il login");
+
+        try
+        {
+            // ID dell'utente loggato
+            orderRequest.UserId = userLoggedId;
+            var updated = await _orderService.UpdateAsync(id, orderRequest);
+            if (!updated)
+                return StatusCode(500, "Qualcosa è andato storto, ordine non modificato");
+
+            return Ok("Ordine aggiornato con successo");
+        }
+        catch (OrderException e)
+        {
+            return StatusCode(500, $"Errore nella modifica dell'ordine: {e.Message}");
+        }
+    }
+
     [HttpPost]
     [ValidToken]
     public async Task<IActionResult> Add([FromBody] OrderDto orderRequest)
@@ -58,5 +88,19 @@ public class OrderController : BaseController
         {
             return StatusCode(500, $"Errore nell'inserimento dell'ordine: {e.Message}");
         }
+    }
+
+    [HttpDelete("{id}")]
+    [ValidToken]
+    public async Task<IActionResult> Delete(int id)
+    {
+        if (id < 1)
+            return BadRequest("ID fornito non valido");
+
+        var deleted = await _orderService.DeleteAsync(id);
+        if (!deleted)
+            return StatusCode(500, "Qualcosa è andato storto, ordino non eliminato");
+
+        return Ok("Ordine eliminato con successo");
     }
 }

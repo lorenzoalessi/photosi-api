@@ -56,10 +56,7 @@ public class OrderService : IOrderService
         await Task.WhenAll(productsTask);
         
         // Recupero l'indirizzo
-        var addressBookDto =
-            await _addressBookHttpClient.Get<AddressBookDto>($"{_photosiAddressBooksUrl}/{orderDto.AddressId}");
-        if (addressBookDto == null)
-            throw new OrderException($"Indirizzo con ID {orderDto.Id} non trovato");
+        var addressBookDto = await AddressBookExist(orderDto.AddressId);
 
         // Torno la dto con tutti i dati
         return new EntireOrderDto()
@@ -72,10 +69,45 @@ public class OrderService : IOrderService
         };
     }
 
+    public async Task<bool> UpdateAsync(int id, OrderDto orderRequest)
+    {
+        var order = await _orderHttpClient.Get<OrderDto>($"{_photosiOrdersUrl}/{id}");
+        if (order == null)
+            throw new OrderException("Ordine non trovato");
+        
+        // Controllo che i prodotti esistano
+        await ProductsExists(orderRequest.OrderProducts);
+        
+        // Controllo l'indirizzo
+        _ = await AddressBookExist(orderRequest.AddressId);
+        
+        // Modifico l'ordine
+        return await _orderHttpClient.Put($"{_photosiOrdersUrl}/{id}", orderRequest);
+    }
+
     public async Task<OrderDto> AddAsync(OrderDto orderRequest)
     {
+        // Controllo che i prodotti esistano
+        await ProductsExists(orderRequest.OrderProducts);
+        
+        // Controllo l'indirizzo
+        _ = await AddressBookExist(orderRequest.AddressId);
+        
+        // Aggiungo l'ordine
+        var newOrder = await _orderHttpClient.Post<OrderDto>(_photosiOrdersUrl, orderRequest);
+        if (newOrder == null)
+            throw new OrderException("Ordine nullo nella risposta");
+        
+        return newOrder;
+    }
+
+    public async Task<bool> DeleteAsync(int id) =>
+        await _orderHttpClient.Delete($"{_photosiOrdersUrl}/{id}");
+
+    private async Task ProductsExists(List<OrderProductDto> orderProductDtos)
+    {
         // Controllo i prodotti
-        var productsTask = orderRequest.OrderProducts.Select(async x =>
+        var productsTask = orderProductDtos.Select(async x =>
         {
             var productDto = await _productHttpClient.Get<ProductDto>($"{_photosiProductsUrl}/{x.Id}");
             if (productDto == null)
@@ -86,18 +118,15 @@ public class OrderService : IOrderService
         // opto per un Task.WhenAll()
         // Attendo il completamento delle chiamate asyncrone per il controllo dei prodotti
         await Task.WhenAll(productsTask);
-        
-        // Controllo l'indirizzo
+    }
+    
+    private async Task<AddressBookDto> AddressBookExist(int addressBookId)
+    {
         var addressBookDto =
-            await _addressBookHttpClient.Get<AddressBookDto>($"{_photosiAddressBooksUrl}/{orderRequest.AddressId}");
+            await _addressBookHttpClient.Get<AddressBookDto>($"{_photosiAddressBooksUrl}/{addressBookId}");
         if (addressBookDto == null)
-            throw new OrderException($"Indirizzo con ID {orderRequest.Id} non trovato");
-        
-        // Aggiungo l'ordine
-        var newOrder = await _orderHttpClient.Post<OrderDto>(_photosiOrdersUrl, orderRequest);
-        if (newOrder == null)
-            throw new OrderException("Ordine nullo nella risposta");
-        
-        return newOrder;
+            throw new OrderException($"Indirizzo con ID {addressBookId} non trovato");
+
+        return addressBookDto;
     }
 }
