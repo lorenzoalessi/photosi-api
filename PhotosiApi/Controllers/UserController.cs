@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using PhotosiApi.Dto;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Mvc;
+using PhotosiApi.Dto.User;
 using PhotosiApi.Exceptions;
 using PhotosiApi.Security;
 using PhotosiApi.Service.User;
 
 namespace PhotosiApi.Controllers;
 
+[ExcludeFromCodeCoverage]
 [Route("api/v1/users")]
 [ApiController]
 public class UserController : BaseController

@@ -1,8 +1,10 @@
-﻿using PhotosiApi.Dto.AddressBook;
+﻿using System.Diagnostics.CodeAnalysis;
+using PhotosiApi.Dto.AddressBook;
 using PhotosiApi.Dto.Product;
 
 namespace PhotosiApi.Dto.Order;
 
+[ExcludeFromCodeCoverage]
 public class EntireOrderDto
 {
     public int Id { get; set; }

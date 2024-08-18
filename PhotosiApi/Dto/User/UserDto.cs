@@ -1,5 +1,8 @@
-﻿namespace PhotosiApi.Dto;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace PhotosiApi.Dto.User;
+
+[ExcludeFromCodeCoverage]
 public class UserDto
 {
     public int Id { get; set; }

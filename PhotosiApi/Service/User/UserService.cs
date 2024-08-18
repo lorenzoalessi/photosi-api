@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
-using PhotosiApi.Dto;
+using PhotosiApi.Dto.User;
 using PhotosiApi.Exceptions;
 using PhotosiApi.HttpClients;
 using PhotosiApi.Service.User.Login;

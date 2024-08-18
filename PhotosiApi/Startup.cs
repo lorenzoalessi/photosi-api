@@ -1,3 +1,4 @@
+﻿using System.Diagnostics.CodeAnalysis;
 using PhotosiApi.HttpClients;
 using PhotosiApi.Service.AddressBook;
 using PhotosiApi.Service.Order;
@@ -8,6 +9,7 @@ using PhotosiApi.Settings;
 
 namespace PhotosiApi;
 
+[ExcludeFromCodeCoverage]
 public class Startup
 {
     private readonly WebApplicationBuilder _builder;

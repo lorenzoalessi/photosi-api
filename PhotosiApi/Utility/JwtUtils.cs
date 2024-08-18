@@ -1,11 +1,13 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using PhotosiApi.Dto;
+using PhotosiApi.Dto.User;
 
 namespace PhotosiApi.Utility;
 
+// TODO: Da testare?
+[ExcludeFromCodeCoverage]
 public static class JwtUtils
 {
     public static string GenerateJwtToken(UserDto userDto)

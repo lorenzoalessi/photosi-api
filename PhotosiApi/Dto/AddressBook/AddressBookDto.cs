@@ -1,5 +1,8 @@
-﻿namespace PhotosiApi.Dto.AddressBook;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace PhotosiApi.Dto.AddressBook;
+
+[ExcludeFromCodeCoverage]
 public class AddressBookDto
 {
     public int Id { get; set; }

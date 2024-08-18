@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Mvc;
 using PhotosiApi.Dto.Order;
 using PhotosiApi.Exceptions;
 using PhotosiApi.Security;
@@ -6,6 +7,7 @@ using PhotosiApi.Service.Order;
 
 namespace PhotosiApi.Controllers;
 
+[ExcludeFromCodeCoverage]
 [Route("api/v1/orders")]
 [ApiController]
 public class OrderController : BaseController

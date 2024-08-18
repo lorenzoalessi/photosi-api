@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Mvc;
 using PhotosiApi.Dto.Product;
 using PhotosiApi.Exceptions;
 using PhotosiApi.Security;
@@ -6,6 +7,7 @@ using PhotosiApi.Service.Product;
 
 namespace PhotosiApi.Controllers;
 
+[ExcludeFromCodeCoverage]
 [Route("api/v1/products")]
 [ApiController]
 public class ProductController : BaseController

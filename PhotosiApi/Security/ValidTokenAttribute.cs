@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using PhotosiApi.Controllers;
-using PhotosiApi.Service.User;
 using PhotosiApi.Service.User.Login;
 using PhotosiApi.Utility;
 
 namespace PhotosiApi.Security;
 
+[ExcludeFromCodeCoverage]
 public class ValidTokenAttribute : ActionFilterAttribute
 {
     public override void OnActionExecuting(ActionExecutingContext context)

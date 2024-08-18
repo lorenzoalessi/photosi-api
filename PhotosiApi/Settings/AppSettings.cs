@@ -1,5 +1,8 @@
-﻿namespace PhotosiApi.Settings;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace PhotosiApi.Settings;
+
+[ExcludeFromCodeCoverage]
 public class AppSettings
 {
     public string PhotosiOrdersUrl { get; set; }

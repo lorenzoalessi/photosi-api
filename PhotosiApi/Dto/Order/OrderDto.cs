@@ -1,5 +1,8 @@
-﻿namespace PhotosiApi.Dto.Order;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace PhotosiApi.Dto.Order;
+
+[ExcludeFromCodeCoverage]
 public class OrderDto
 {
     public int Id { get; set; }

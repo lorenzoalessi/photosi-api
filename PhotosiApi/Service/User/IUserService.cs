@@ -1,4 +1,5 @@
 ﻿using PhotosiApi.Dto;
+using PhotosiApi.Dto.User;
 
 namespace PhotosiApi.Service.User;
 
