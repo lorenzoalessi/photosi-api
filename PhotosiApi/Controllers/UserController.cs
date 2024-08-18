@@ -8,7 +8,7 @@ namespace PhotosiApi.Controllers;
 
 [Route("api/v1/users")]
 [ApiController]
-public class UserController : ControllerBase
+public class UserController : BaseController
 {
     private readonly IUserService _userService;
 

@@ -8,7 +8,7 @@ namespace PhotosiApi.Controllers;
 
 [Route("api/v1/address-books")]
 [ApiController]
-public class AddressBookController : ControllerBase
+public class AddressBookController : BaseController
 {
     private readonly IAddressBookService _addressBookService;
 
