@@ -17,6 +17,24 @@ public class OrderController : BaseController
         _orderService = orderService;
     }
 
+    [HttpGet]
+    [ValidToken]
+    public async Task<IActionResult> GetAllForUser()
+    {
+        var userLoggedId = LoggedUser?.User.Id ?? 0;
+        if (userLoggedId < 1)
+            return BadRequest("Errore nella sessione dell'utente, ritentare il login");
+
+        try
+        {
+            return Ok(await _orderService.GetAllForUser(userLoggedId));
+        }
+        catch (OrderException e)
+        {
+            return StatusCode(500, $"Errore nel recupero degli ordini per l'utente: {e.Message}");
+        }
+    }
+
     [HttpGet("{id}")]
     [ValidToken]
     public async Task<IActionResult> GetById(int id)

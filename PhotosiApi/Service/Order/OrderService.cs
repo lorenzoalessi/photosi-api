@@ -34,6 +34,47 @@ public class OrderService : IOrderService
         _addressBookHttpClient = addressBookHttpClient;
     }
 
+    public async Task<List<EntireOrderDto>> GetAllForUser(int userId)
+    {
+        // Recupero gli ordini
+        var orders = await _orderHttpClient.Get<List<OrderDto>>($"{_photosiOrdersUrl}/user/{userId}");
+        if (orders == null)
+            throw new OrderException("Ordini non trovati");
+
+        if (orders.Count == 0)
+            return [];
+
+        var ordersTask = orders.Select(async order =>
+        {
+            // Recupero tutti i prodotti (per ogni ordine)
+            var productsTask = order.OrderProducts.Select(async product =>
+            {
+                var entireProductDto = await _productHttpClient.Get<EntireProductDto>($"{_photosiProductsUrl}/{product.Id}");
+                if (entireProductDto == null)
+                    throw new OrderException($"Prodotto con ID {product.Id} non trovato");
+
+                entireProductDto.Quantity = product.Quantity;
+                return entireProductDto;
+            });
+
+            var entireProductsList = (await Task.WhenAll(productsTask)).ToList();
+            
+            // Recupero l'indirizzo (per ogni ordine)
+            var addressBook = await AddressBookExist(order.AddressId);
+            
+            return new EntireOrderDto()
+            {
+                Id = order.Id,
+                OrderCode = order.OrderCode,
+                UserId = userId,
+                AddressBookDto = addressBook,
+                EntireProductDtos = entireProductsList
+            };
+        });
+
+        return (await Task.WhenAll(ordersTask)).ToList();
+    }
+
     public async Task<EntireOrderDto> GetByIdAsync(int id)
     {
         // Recupero l'ordine

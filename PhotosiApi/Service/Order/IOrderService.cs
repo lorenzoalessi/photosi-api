@@ -4,6 +4,8 @@ namespace PhotosiApi.Service.Order;
 
 public interface IOrderService
 {
+    Task<List<EntireOrderDto>> GetAllForUser(int userId);
+    
     Task<EntireOrderDto> GetByIdAsync(int id);
 
     Task<bool> UpdateAsync(int id, OrderDto orderRequest);
