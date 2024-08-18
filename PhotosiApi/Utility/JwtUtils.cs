@@ -1,13 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using PhotosiApi.Dto.User;
 
 namespace PhotosiApi.Utility;
 
-// TODO: Da testare?
-[ExcludeFromCodeCoverage]
 public static class JwtUtils
 {
     public static string GenerateJwtToken(UserDto userDto)
@@ -48,8 +45,8 @@ public static class JwtUtils
 
         // Claims
         var claims = token.Claims.ToArray();
-        var checkClaim = new Claim(ClaimTypes.NameIdentifier, userDto.Id.ToString());
-        if (claims.FirstOrDefault(x => x == checkClaim) != null)
+        var checkClaim = claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier && x.Value == userDto.Id.ToString());
+        if (checkClaim == null)
             return false;
         
         // Expiration
