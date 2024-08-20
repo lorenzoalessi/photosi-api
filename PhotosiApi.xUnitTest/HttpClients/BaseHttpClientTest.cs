@@ -23,10 +23,7 @@ public class BaseHttpClientTest : TestSetup
     {
         // Arrange
         _handler.SetupRequest(HttpMethod.Get, URL)
-            .ReturnsResponse(HttpStatusCode.InternalServerError, configure: response =>
-            {
-                response.Content.Headers.LastModified = new DateTime(2024, 1, 1);
-            });
+            .ReturnsResponse(HttpStatusCode.InternalServerError, string.Empty);
         
         var client = _handler.CreateClient();
         var baseHttpClient = GetHttpClient(client);
