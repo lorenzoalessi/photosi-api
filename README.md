@@ -27,7 +27,7 @@ I file di properties appsettings e appsettings.Development.json presentano una s
 | PhotosiOrdersUrl       | string | http://localhost:1003/api/v1/orders        | Url API microserizio Orders       |
 | PhotosiAddressBooksUrl | string | http://localhost:1004/api/v1/address-books | Url API microserizio Users        |
 
-## OPERAZIONE EFFETTUABILI
+## OPERAZIONI EFFETTUABILI
 
 ### Creazione di un utente
 
@@ -60,6 +60,3 @@ Tramite questo end-point è possibile creare un ordine con i relativi prodotti a
 passandogli la dto corretta nel body della chiamata.
 
 ### ECC...
-
-**N.B. Per comodità ho creato un seeder nel microservizio dei prodotti che genera automaticamente
-alcuni dati**
